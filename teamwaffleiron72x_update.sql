@@ -25,12 +25,18 @@ SET totallikes = (select sum(tip.likes)
 
 --numcheckins to business
 
+
 UPDATE business
-SET numcheckins = (SELECT (LENGTH(date) - LENGTH(REPLACE(date, ',', '')) + 1) as numcheck 
-                  FROM checkin
-               WHERE checkin.business_id = business.business_id)
+set numcheckins = numcheck
+FROM (SELECT business.business_id as id, count(business.business_id) as numcheck 
+                  FROM checkin, business
+               WHERE checkin.business_id = business.business_id
+GROUP BY 1) as a
+WHERE business.business_id = a.id
 
 ;
+
+
 --totallikes to business:
 UPDATE business
 SET totallikes = (select sum(tip.likes) 
